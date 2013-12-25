@@ -1,0 +1,43 @@
+//* iff
+/* if lalala*/
+/* if lalala /*
+/* if l//alala*///hg
+/* if lalala/h/h/h//h/*/*/*//h
+/* if lalala/h/h/h//h/*/*/**///h
+        cout << "Couldn\'t open file!";
+    else
+    {
+        ofstream fout("fout//.txt", ios_base::out);
+        fin.get(ch);
+        while (!fin.eof())
+        {
+            while (ch != '\n' && ch != 32)
+            {
+                if ((ch >= 65 && ch <= 90) || (ch >= 97 && ch <= 122))
+                {
+                    if (mas[ch - 32])
+                    {
+                        mas[ch - 32] = false;
+                        fout << ch;
+                        cout << ch;
+                        fin.get(ch);
+                    }
+                    else fin.get(ch);
+                }
+                else
+                {
+                    fout << ch;
+                    cout << ch;
+                    fin.get(ch);
+                }
+            }
+            fout << ch;
+            cout << ch;
+            if (!fin.eof())
+                fin.get(ch);
+            truefication(mas);
+        }
+    }
+    fin.close();
+    return 0;
+}
