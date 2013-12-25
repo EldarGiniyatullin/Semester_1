@@ -1,5 +1,7 @@
 #pragma once
 
+bool isOperand(char ch);
+
 bool isSign(char ch);
 
 bool isDigit(char ch);

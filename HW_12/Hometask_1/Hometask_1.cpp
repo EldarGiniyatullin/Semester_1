@@ -5,46 +5,122 @@ using namespace std;
 
 enum Status {begin, first, operand, second, end, correct, incorrect};
 
-void isIt()
+bool isIt()
 {
     Status action = begin;
     char ch;
     bool firstOperation = false;
-    switch (action)
+    bool isBreak = false;
+    while(true)
     {
-    case begin:
+        switch (action)
+        {
+        case begin:
             cin.get(ch);
             if (ch == '(')
             {
-              action = first;
+                isBreak = true;
+                cin.get(ch);
+                if (ch == ' ')
+                    action = first;
+                else
+                    action = incorrect;
             }
             else
             {
                 cin.putback(ch);
                 action = first;
             }
-        break;
-    case first:
-        if (isDouble())
-        {
-            firstOperation = true;
-            action = operand;
+            break;
+        case first:
+            if (isDouble())
+            {
+                firstOperation = false;
+                action = operand;
+            }
+            else if (isIt())
+            {
+                firstOperation = true;
+                action = operand;
+            }
+            else
+                action = incorrect;
+            break;
+        case operand:
+            if (firstOperation)
+            {
+                cin.get(ch);
+                if (ch != ' ')
+                {
+                    action = incorrect;
+                }
+            }
+            if (action != incorrect)
+            {
+                cin.get(ch);
+                if (isOperand(ch))
+                {
+                    cin.get(ch);
+                    if (ch != ' ')
+                    {
+                        action = incorrect;
+                    }
+                    else
+                        action = second;
+                }
+                else
+                    action = incorrect;
+            }
+            break;
+        case second:
+            if (isDouble())
+            {
+                firstOperation = false;
+                action = end;
+            }
+            else if (isIt)
+            {
+                firstOperation = true;
+                action = end;
+            }
+            else
+            {
+                action = incorrect;
+            }
+            break;
+        case end:
+            if (firstOperation)
+            {
+                cin.get(ch);
+                if (ch != ' ')
+                    action = incorrect;
+            }
+            if (isBreak)
+            {
+                cin.get(ch);
+                if (ch == ')')
+                {
+                    action = correct;
+                }
+                else
+                    action = incorrect;
+            }
+            if (!isBreak && action != incorrect)
+                action = correct;
+            break;
+        case correct:
+            return true;
+            break;
+        default:
+            return false;
+            break;
         }
-        else if (isIt())
-        {
-            action = operand;
-        }
-        else
-            action = incorrect;
-        break;
     }
-
-
-
 }
 
 int main()
 {
-
+    cout << "Enter the operation: ";
+    isIt() ? cout << "\nYes" : cout << "\nNo";
 }
 

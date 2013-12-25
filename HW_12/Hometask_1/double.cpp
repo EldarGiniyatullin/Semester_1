@@ -3,6 +3,13 @@
 
 enum Status{incorrect = -1, firstSign, requiredNumericAfterSign, numericsBeforeDotOrE, requiredNumericAfterDot, numericsAfterDot, degreeE, signAfterE, endingNumerics, correct};
 
+using namespace std;
+
+bool isOperand(char ch)
+{
+    return (isSign(ch) || ch == '*' || ch == '/') ? true : false;
+}
+
 bool isSign(char ch)
 {
     return (ch == '+' || ch == '-') ? true : false;
