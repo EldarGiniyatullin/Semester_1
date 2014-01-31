@@ -6,7 +6,7 @@ using namespace std;
 
 int main()
 {
-    ifstream fin("text2.txt");
+    ifstream fin("text.txt");
     if (!fin.is_open())
     {
         cout << "Couldn\'t open file \"text.txt\"";

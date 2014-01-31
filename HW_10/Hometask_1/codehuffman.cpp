@@ -1,6 +1,8 @@
 #include "codehuffman.h"
 #include <fstream>
+#include <iostream>
 
+using std::cout;
 using std::ios_base;
 using std::ifstream;
 using std::ofstream;
@@ -30,7 +32,32 @@ void addSymbol(char ch, MyString *string)
     }
 }
 
-MyString buildTree(List &symbols)
+void numerification(TreeNode *newEl, MyString *codes, char ch)
+{
+    if (newEl->left)
+    {
+        numerification(newEl->left, codes, ch);
+        numerification(newEl->right, codes, ch);
+    }
+    else
+    {
+        MySymbol *newSym = new MySymbol;
+        newSym->symbol = ch;
+        if (codes[(int)newEl->symbol].first)
+        {
+            newSym->next = codes[(int)newEl->symbol].first;
+            codes[(int)newEl->symbol].first = newSym;
+        }
+        else
+        {
+            codes[(int)newEl->symbol].first = newSym;
+            codes[(int)newEl->symbol].last = newSym;
+            newSym->next = NULL;
+        }
+    }
+}
+
+void buildTree(List &symbols, MyString *codes)
 {
         while (symbols.first->next)
         {
@@ -42,6 +69,8 @@ MyString buildTree(List &symbols)
             symbols.first = newEl->right->next;
             newEl->left->next = NULL;
             newEl->right->next = NULL;
+            numerification(newEl->left, codes, '0');
+            numerification(newEl->right, codes, '1');
             newEl->value = newEl->left->value + newEl->right->value;
             TreeNode **tmp = &(symbols.first);
             while ((*tmp) && newEl->value > (*tmp)->value)
@@ -51,7 +80,7 @@ MyString buildTree(List &symbols)
         }
 }
 
-void addSymbolList(char ch, List &symbols) //adds to list and make it sorted
+void addSymbolList(char ch, List &symbols) //adds to list and makes it sorted
 {
     TreeNode **tmp = &(symbols.first);
     while (*tmp && (*tmp)->symbol != ch)
@@ -91,21 +120,14 @@ void copyString(MyString stringToCopy, MyString *string2)
 
 void printTree(TreeNode* tree, ofstream &fout)
 {
-    fout << "(" << tree->symbol << " ";
     if (tree->left)
     {
-        if (tree->left->left)
-            printTree(tree->left, fout);
-        else fout << tree->left->symbol;
+        fout << "(";
+        printTree(tree->left, fout);
+        printTree(tree->right, fout);
+        fout << ")";
     }
-    fout << " ";
-    if (tree->right)
-    {
-        if (tree->right->left)
-            printTree(tree->right, fout);
-        else fout << tree->right->symbol;
-    }
-    fout << ")";
+    else fout << tree->symbol;
 }
 
 void deleteString(MyString &temp)
@@ -118,29 +140,6 @@ void deleteString(MyString &temp)
         tmp = temp.first;
     }
     temp.last = NULL;
-}
-
-void codification(TreeNode *node, MyString *codes, MyString temp)
-{
-    if (node->symbol == '*')
-    {
-        MyString *temp2 = new MyString;
-        temp2->first = NULL;
-        temp2->last = NULL;
-        copyString(temp, temp2);
-        addSymbol('0', temp2);
-        codification(node->left, codes, *temp2);
-        temp2->last->symbol = '1';
-        codification(node->right, codes, *temp2);
-        deleteString(*temp2);
-        delete temp2;
-    }
-    else
-    {
-        if (!temp.first)
-            addSymbol('0', &temp);
-        copyString(temp, &codes[(int)node->symbol]);
-    }
 }
 
 void printString(MyString string, ofstream &fout)
@@ -175,28 +174,32 @@ void huffmanCoding(ifstream &fin)
         fin.get(ch);
     }
     fin.close();
-    buildTree(symbols);
-    fin.open("text2.txt");
-    ofstream fout("HuffmanCode.txt", ios_base::out | ios_base::trunc);
-    printTree(symbols.first, fout);
-    fout << "\n";
     MyString codes[ascii];
     for (int i = 0; i < ascii; i++)
     {
         codes[i].first = NULL;
         codes[i].last = NULL;
     }
-    MyString *temp = new MyString;
-    temp->first = NULL;
-    temp->last = NULL;
-    codification(symbols.first, codes, *temp);
-    delete temp;
+    buildTree(symbols, codes);
+    fin.open("text.txt");
+    ofstream fout("HuffmanCode.txt", ios_base::out | ios_base::trunc);
+    printTree(symbols.first, fout);
+    fout << "\n";
     while (!fin.eof())
     {
         fin.get(ch);
         if (ch != '\n')
         {
             printString(codes[(int)ch], fout);
+        }
+        else
+        {
+            fin.get(ch);
+            if (!fin.eof())
+            {
+                fin.putback(ch);
+                printString(codes[(int)ch], fout);
+            }
         }
     }
     fin.close();
@@ -211,6 +214,5 @@ void huffmanCoding(ifstream &fin)
         }
     }
     removeTree(symbols.first, *symbols.first);
-    delete symbols.first;
     symbols.first = NULL;
 }
