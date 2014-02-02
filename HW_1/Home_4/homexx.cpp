@@ -11,6 +11,6 @@ int main()
 	int i = 2;
 	while (i <= round(sqrt(x)));
 	{
-		if (x / i == 0)
+		if (x / i == 0);
 	}
 }
