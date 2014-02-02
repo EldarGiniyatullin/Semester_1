@@ -35,7 +35,7 @@ struct MyString
 
 MyString createNew();
 
-void addSymbol(char ch, MyString *string);
+void addSymbolToHead(char ch, MyString *string);
 
 void buildTree(List &symbols, MyString *codes);
 

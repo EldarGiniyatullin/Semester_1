@@ -15,20 +15,20 @@ MyString createNew()
     return newString;
 }
 
-void addSymbol(char ch, MyString *string)
+void addSymbolToHead(char ch, MyString *string)
 {
     MySymbol *newSym = new MySymbol;
-    newSym->next = NULL;
     newSym->symbol = ch;
     if (string->first)
     {
-        string->last->next = newSym;
-        string->last = newSym;
+        newSym->next = string->first;
+        string->first = newSym;
     }
     else
     {
         string->first = newSym;
         string->last = newSym;
+        newSym->next = NULL;
     }
 }
 
@@ -40,25 +40,17 @@ void numerification(TreeNode *newEl, MyString *codes, char ch)
         numerification(newEl->right, codes, ch);
     }
     else
-    {
-        MySymbol *newSym = new MySymbol;
-        newSym->symbol = ch;
-        if (codes[(int)newEl->symbol].first)
-        {
-            newSym->next = codes[(int)newEl->symbol].first;
-            codes[(int)newEl->symbol].first = newSym;
-        }
-        else
-        {
-            codes[(int)newEl->symbol].first = newSym;
-            codes[(int)newEl->symbol].last = newSym;
-            newSym->next = NULL;
-        }
-    }
+        addSymbolToHead(ch, &codes[(int)newEl->symbol]);
 }
 
 void buildTree(List &symbols, MyString *codes)
 {
+    if (!symbols.first->next)
+    {
+        addSymbolToHead('1', &codes[(int)symbols.first->symbol]);
+    }
+    else
+    {
         while (symbols.first->next)
         {
             TreeNode *newEl = new TreeNode;
@@ -77,7 +69,9 @@ void buildTree(List &symbols, MyString *codes)
                 tmp = &((*tmp)->next);
             newEl->next = *tmp;
             *tmp = newEl;
+
         }
+    }
 }
 
 void addSymbolList(char ch, List &symbols) //adds to list and makes it sorted
