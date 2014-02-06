@@ -163,8 +163,7 @@ void huffmanCoding(ifstream &fin)
     fin.get(ch);
     while (!fin.eof())
     {
-        if (ch != '\n')
-            addSymbolList(ch, symbols);
+        addSymbolList(ch, symbols);
         fin.get(ch);
     }
     fin.close();
@@ -179,22 +178,11 @@ void huffmanCoding(ifstream &fin)
     ofstream fout("HuffmanCode.txt", ios_base::out | ios_base::trunc);
     printTree(symbols.first, fout);
     fout << "\n";
+    fin.get(ch);
     while (!fin.eof())
     {
+        printString(codes[(int)ch], fout);
         fin.get(ch);
-        if (ch != '\n')
-        {
-            printString(codes[(int)ch], fout);
-        }
-        else
-        {
-            fin.get(ch);
-            if (!fin.eof())
-            {
-                fin.putback(ch);
-                printString(codes[(int)ch], fout);
-            }
-        }
     }
     fin.close();
     fout.close();
