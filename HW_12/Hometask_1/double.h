@@ -10,4 +10,4 @@ bool isE(char ch);
 
 bool isEnding(char ch);
 
-bool isDouble();
+bool isDouble(bool noBreak);

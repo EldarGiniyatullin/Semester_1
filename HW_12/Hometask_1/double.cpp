@@ -30,9 +30,8 @@ bool isEnding(char ch)
     return (ch == ' ' || ch == '\n' || ch == '\t' || ch == '\0') ? true : false;
 }
 
-bool isDouble()
+bool isDouble(bool noBreak)
 {
-    int lexemeBeginning = 1;
     char ch;
     Status action = firstSign;
     while(true)
@@ -44,12 +43,10 @@ bool isDouble()
         if (isSign(ch))
         {
             action = requiredNumericAfterSign;
-            lexemeBeginning++;
         }
         else if (isDigit(ch))
         {
             action = numericsBeforeDotOrE;
-            lexemeBeginning++;
         }
         else
             action = incorrect;
@@ -58,30 +55,28 @@ bool isDouble()
             if (isDigit(ch))
             {
                 action = numericsBeforeDotOrE;
-                lexemeBeginning++;
             }
             else
                 action = incorrect;
             break;
         case numericsBeforeDotOrE:
             cin.get(ch);
-            if (isDigit(ch))
+            if (ch == '.')
             {
-                lexemeBeginning++;
-            }
-            else if (ch == '.')
-            {
-                lexemeBeginning++;
                 action = requiredNumericAfterDot;
             }
             else if (ch == 'E')
             {
-                lexemeBeginning++;
                 action = degreeE;
+            }
+            else if (isOperand(ch) || (ch == ')' && !noBreak))
+            {
+                cin.putback(ch);
+                action = correct;
             }
             else if (isEnding(ch))
                 action = correct;
-            else
+            else if (!(isDigit(ch)))
                 action = incorrect;
             break;
         case requiredNumericAfterDot:
@@ -89,25 +84,24 @@ bool isDouble()
             if (isDigit(ch))
             {
                 action = numericsAfterDot;
-                lexemeBeginning++;
             }
             else
                 action = incorrect;
             break;
         case numericsAfterDot:
             cin.get(ch);
-            if (isDigit(ch))
+            if (ch == 'E')
             {
-                lexemeBeginning++;
-            }
-            else if (ch == 'E')
-            {
-                lexemeBeginning++;
                 action = degreeE;
+            }
+            else if (isOperand(ch) || (ch == ')' && !noBreak))
+            {
+                cin.putback(ch);
+                action = correct;
             }
             else if (isEnding(ch))
                 action = correct;
-            else
+            else if (!isDigit(ch))
                 action = incorrect;
             break;
         case degreeE:
@@ -115,12 +109,10 @@ bool isDouble()
             if (isSign(ch))
             {
                 action = signAfterE;
-                lexemeBeginning++;
             }
             else if (isDigit(ch))
             {
                 action = endingNumerics;
-                lexemeBeginning++;
             }
             else
                 action = incorrect;
@@ -130,18 +122,20 @@ bool isDouble()
             if (isDigit(ch))
             {
                 action = endingNumerics;
-                lexemeBeginning++;
             }
             else
                 action = incorrect;
             break;
         case endingNumerics:
             cin.get(ch);
-            if (isDigit(ch))
-                lexemeBeginning++;
-            else if (isEnding(ch))
+            if (isEnding(ch))
                 action = correct;
-            else
+            else if (isOperand(ch) || (ch == ')' && !noBreak))
+            {
+                cin.putback(ch);
+                action = correct;
+            }
+            else if (!isDigit(ch))
                 action = incorrect;
             break;
         case correct:
