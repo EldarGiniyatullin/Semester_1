@@ -47,10 +47,10 @@ void deleteTree(TreeNode *tree)
 void readCode(ifstream &fin, TreeNode *tree, ofstream &fout)
 {
     char ch = '\0';
-    while (ch != '\n')
+    while (ch != '\n' && !fin.eof())
     {
         TreeNode *tmp = tree;
-        while (true)
+        while (!fin.eof())
         {
             fin.get(ch);
             if (tmp->left)
@@ -66,9 +66,17 @@ void readCode(ifstream &fin, TreeNode *tree, ofstream &fout)
             }
             else
             {
-                fin.putback(ch);
-                fout << tmp->symbol;
-                break;
+                if (!fin.eof())
+                {
+                    fin.putback(ch);
+                    fout << tmp->symbol;
+                    break;
+                }
+                else
+                {
+                    fout << tmp->symbol;
+                    return;
+                }
             }
         }
     }
