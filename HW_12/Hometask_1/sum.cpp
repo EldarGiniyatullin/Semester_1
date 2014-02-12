@@ -27,7 +27,7 @@ bool isSum(bool noBreak)
             else
             {
                 cin.putback(ch);
-                noBreak ? (isDouble(true) ? action = operand : action = incorrect) : (isDouble(false) ? action = operand : action = incorrect);
+                noBreak ? (action = isDouble(true) ? operand : incorrect) : (action = isDouble(false) ? operand : incorrect);
             }
             break;
         case operand:
