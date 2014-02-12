@@ -21,7 +21,7 @@ bool isSum(bool noBreak)
                 if (isSum(false))
                 {
                     cin.get(ch);
-                    ch == ')' ? action = operand : action = incorrect;
+                    action = (ch == ')') ? operand : incorrect;
                 }
             }
             else
@@ -46,10 +46,8 @@ bool isSum(bool noBreak)
             break;
         case correct:
             return true;
-            break;
         default:
             return false;
-            break;
         }
     }
 }
