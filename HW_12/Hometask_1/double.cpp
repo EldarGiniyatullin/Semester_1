@@ -140,10 +140,8 @@ bool isDouble(bool noBreak)
             break;
         case correct:
             return true;
-            break;
         default:
             return false;
-            break;
         }
     }
 }
